@@ -2,10 +2,10 @@ import { addHeader } from "../components/utils.js";
 
 const body = document.querySelector("body");
 
-body.append(await populateTopQuests());
+body.append(await populateTopQuests(), await populateCategories);
 addHeader();
 // populateTopQuests();
-// populateCategories();
+populateCategories();
 
 function buildTopQuests(quests) {
   const topQuestsWrap = document.createElement("div");
@@ -16,6 +16,7 @@ function buildTopQuests(quests) {
   const sectionName = document.createElement("h3");
   sectionName.textContent = "Popular Quests";
   const viewAllBtn = document.createElement("a");
+  viewAllBtn.textContent = "All Quests";
   viewAllBtn.href = "/pages/allQuests.html";
   head.append(sectionName, viewAllBtn);
 
@@ -73,7 +74,7 @@ function buildTopQuestCard(quest) {
     e.preventDefault();
     const questId = quest._id;
     console.log(questId);
-    window.location.href = `/quest/${questId}`;
+    window.location.href = `/pages/quest.html?id=${questId}`;
   });
   return card;
 }
@@ -85,4 +86,5 @@ async function populateTopQuests() {
 
 async function populateCategories() {
   const categories = await (await fetch("/quests/categories")).json();
+  console.log(categories.data);
 }

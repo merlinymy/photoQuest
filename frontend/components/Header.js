@@ -6,8 +6,8 @@ export const header = () => {
       </a>
       <nav>
         <ul>
-          <li><a href="pages/quests.html">Explore Quests</a></li>
-          <li><a href="pages/login.html">Sign In</a></li>
+          <li><a href="/pages/quests.html">Explore Quests</a></li>
+          <li><a href="/pages/login.html">Sign In</a></li>
         </ul>
       </nav>`;
   return header;
