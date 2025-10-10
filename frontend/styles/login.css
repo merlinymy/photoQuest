@@ -1,185 +1,258 @@
+/* ==== Photo Quest — Login (works with sticky header) ==== */
+
+/* Tokens */
+:root {
+  --header-h: 48px; /* keep in sync with header */
+  --bg: #0a0a0a;
+  --panel: #151515;
+  --panel-2: #1b1b1b;
+  --text: #f4f4f4;
+  --muted: #b8b8b8;
+  --line: #232323;
+
+  --accent: #f77e2d;
+  --accent-2: #ff9b52;
+  --teal: #1ea896;
+
+  --ring: rgba(247, 126, 45, 0.35);
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+  --radius: 14px;
+}
+
+/* Reset */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+/* Page (do NOT center the body—let header sit at the top) */
 body {
+  min-height: 100dvh;
+  color: var(--text);
+  background: radial-gradient(
+      1200px 600px at 10% -10%,
+      #121212 0%,
+      var(--bg) 60%
+    )
+    fixed;
   font-family:
     -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
     Cantarell, sans-serif;
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, #e0e7ff 0%, #fce7f3 100%);
+
+  /* Let header be sticky; we just stack content below it */
+  display: block;
 }
 
+/* The container now handles centering */
 .container {
   width: 100%;
   max-width: 420px;
-  margin: 20px;
+  margin-inline: auto;
+
+  /* center vertically in the remaining viewport area */
+  min-height: calc(100dvh - var(--header-h));
+  display: grid;
+  place-items: center;
+
+  padding: 20px; /* small side padding for tiny viewports */
 }
 
+/* Card */
 .card {
-  background: white;
-  border-radius: 16px;
-  padding: 48px 40px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+  width: 100%;
+  background: linear-gradient(180deg, var(--panel), var(--panel-2));
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 32px 28px;
+  box-shadow: var(--shadow);
 }
 
+/* Logo */
 .logo {
   width: 48px;
   height: 48px;
-  margin: 0 auto 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #f3f4f6;
+  margin: 0 auto 20px;
+  display: grid;
+  place-items: center;
   border-radius: 12px;
+  background: linear-gradient(180deg, #1f1f1f, #171717);
+  border: 1px solid #242424;
 }
-
 .logo svg {
-  width: 28px;
-  height: 28px;
-  stroke: #6b7280;
+  width: 26px;
+  height: 26px;
+  stroke: var(--accent);
   fill: none;
   stroke-width: 2;
 }
 
+/* Headings */
 h1 {
-  font-size: 28px;
-  font-weight: 600;
+  font-size: 22px;
+  font-weight: 700;
   text-align: center;
-  margin-bottom: 12px;
-  color: #111827;
+  margin-bottom: 8px;
+  color: var(--text);
 }
-
 .subtitle {
   text-align: center;
-  color: #6b7280;
-  font-size: 15px;
-  margin-bottom: 32px;
+  color: var(--muted);
+  font-size: 14px;
+  margin-bottom: 22px;
 }
 
+/* Form */
 .form-group {
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
-
 .label-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
-
 label {
-  font-size: 14px;
-  font-weight: 500;
-  color: #374151;
+  font-size: 13px;
+  font-weight: 600;
+  color: #e9e9e9;
 }
 
 .toggle-link {
-  font-size: 13px;
-  color: #6b7280;
+  font-size: 12.5px;
+  color: var(--teal);
   text-decoration: none;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 4px;
   cursor: pointer;
-  transition: color 0.2s;
+  transition: color 0.2s ease;
 }
-
 .toggle-link:hover {
-  color: #111827;
+  color: #22b7a4;
 }
-
 .toggle-link svg {
   width: 14px;
   height: 14px;
 }
 
+/* Inputs */
 input[type="email"],
 input[type="tel"] {
   width: 100%;
-  padding: 12px 16px;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-  font-size: 15px;
-  transition: all 0.2s;
-  background: white;
+  padding: 12px 14px;
+  background: #121212;
+  color: var(--text);
+  border: 1px solid #2a2a2a;
+  border-radius: 10px;
+  font-size: 14.5px;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s,
+    background 0.2s;
 }
-
+input::placeholder {
+  color: #8b8b8b;
+}
 input[type="email"]:focus,
 input[type="tel"]:focus {
   outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--ring);
 }
 
-input::placeholder {
-  color: #9ca3af;
-}
-
+/* Primary CTA */
 .primary-btn {
   width: 100%;
-  padding: 13px 16px;
-  background: #1f2937;
-  color: white;
-  border: none;
-  border-radius: 8px;
+  padding: 12px 14px;
+  background: linear-gradient(180deg, var(--accent), var(--accent-2));
+  color: #0a0a0a;
+  border: 1px solid rgba(247, 126, 45, 0.55);
+  border-radius: 10px;
   font-size: 15px;
-  font-weight: 500;
+  font-weight: 800;
   cursor: pointer;
-  transition: background 0.2s;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
+  transition:
+    transform 0.08s,
+    filter 0.15s,
+    box-shadow 0.15s;
+  box-shadow: 0 6px 18px rgba(247, 126, 45, 0.25);
 }
-
 .primary-btn:hover {
-  background: #111827;
+  filter: brightness(1.08);
+  box-shadow: 0 10px 24px rgba(247, 126, 45, 0.33);
 }
-
 .primary-btn:active {
-  transform: scale(0.98);
+  transform: translateY(1px) scale(0.995);
 }
 
+/* Divider */
 .divider {
   text-align: center;
-  margin: 24px 0;
+  margin: 18px 0;
   position: relative;
+  color: var(--muted);
+  font-size: 12px;
+  letter-spacing: 0.3px;
+}
+.divider::before,
+.divider::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 40%;
+  border-top: 1px solid var(--line);
+}
+.divider::before {
+  left: 0;
+}
+.divider::after {
+  right: 0;
 }
 
+/* Social buttons (neutral) */
 .social-btn {
   width: 100%;
-  padding: 12px 16px;
-  background: #f3f4f6;
-  color: #374151;
-  border: none;
-  border-radius: 8px;
-  font-size: 15px;
-  font-weight: 500;
+  padding: 11px 14px;
+  background: #111;
+  color: #e3e3e3;
+  border: 1px solid #2a2a2a;
+  border-radius: 10px;
+  font-size: 14.5px;
+  font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s;
+  transition:
+    border-color 0.2s,
+    background 0.2s,
+    transform 0.08s;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
-
 .social-btn:hover {
-  background: #e5e7eb;
+  background: #151515;
+  border-color: #343434;
 }
-
 .social-btn:active {
-  transform: scale(0.98);
+  transform: translateY(1px) scale(0.995);
 }
-
 .social-btn svg {
   width: 18px;
   height: 18px;
 }
 
+/* Utility */
 .hidden {
   display: none;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
 }
