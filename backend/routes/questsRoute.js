@@ -34,3 +34,52 @@ questsRouter.get("/:userId", async (req, res) => {
   const data = await getQuestsByCreatorId(client, userId);
   res.json({ data });
 });
+
+questsRouter.post("/newQuest", async (req, res) => {
+  // Endpoint to create a new quest
+  const {
+    title,
+    description,
+    creatorId,
+    xpRewards,
+    endAt,
+    tags,
+    counters,
+    imageUrl,
+    tip,
+  } = req.body;
+  console.log({
+    title,
+    description,
+    creatorId,
+    xpRewards,
+    endAt,
+    tags,
+    counters,
+    imageUrl,
+    tip,
+  });
+  const client = await mongoClient();
+  try {
+    await client.db("photo_quest").collection("challenges").insertOne({
+      title,
+      description,
+      creatorId,
+      xpRewards,
+      endAt,
+      tags,
+      counters,
+      imageUrl,
+      tip,
+    });
+    res
+      .status(201)
+      .json({ status: "success", message: "Quest created successfully" });
+  } catch (error) {
+    console.error("Error inserting new quest:", error);
+    res.status(500).json({ status: "error", message: "Internal Server Error" });
+    return;
+  } finally {
+    await client.close();
+  }
+});

@@ -11,6 +11,6 @@ app.use("/quests", questsRouter);
 app.use("/quest", questRouter);
 app.use("/user", userRouter);
 app.use("/submissions", submissionRoute);
-app.listen(3000, () => {
-  console.log("server running on http://localhost:3000");
+app.listen(3004, () => {
+  console.log("server running on http://localhost:3004");
 });
