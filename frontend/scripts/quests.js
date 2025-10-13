@@ -1,13 +1,17 @@
+import { buildQuestCard } from "../components/QuestCard.js";
 import { addHeader } from "../components/utils.js";
 
 const body = document.querySelector("body");
 
-body.append(await populateTopQuests(), await populateCategories);
 addHeader();
-// populateTopQuests();
+const topQuestsSection = await populateTopQuests();
+if (topQuestsSection) {
+  body.append(topQuestsSection);
+}
 populateCategories();
 
 function buildTopQuests(quests) {
+  const questList = Array.isArray(quests) ? quests : [];
   const topQuestsWrap = document.createElement("div");
   topQuestsWrap.classList.add("top-quests-wrap");
 
@@ -23,60 +27,21 @@ function buildTopQuests(quests) {
   // topQuests main
   const main = document.createElement("div");
   main.classList.add("top-quests-grid");
-  quests.forEach((q) => {
-    main.append(buildTopQuestCard(q));
+  questList.forEach((quest) => {
+    main.append(buildQuestCard(quest));
   });
+
+  if (questList.length === 0) {
+    const emptyState = document.createElement("p");
+    emptyState.classList.add("top-quests-empty");
+    emptyState.textContent = "No quests available yet. Check back soon!";
+    topQuestsWrap.append(head, emptyState);
+    return topQuestsWrap;
+  }
 
   topQuestsWrap.append(head, main);
 
   return topQuestsWrap;
-}
-
-function buildTopQuestCard(quest) {
-  const card = document.createElement("div");
-  card.classList.add("top-quest-card");
-  const questImg = document.createElement("img");
-  questImg.src = quest.imageUrl;
-  questImg.alt = `cover photo for quest ${quest.title}`;
-
-  // quest info section
-  const questInfo = document.createElement("div");
-  questInfo.classList.add("quest-info");
-  const questTitle = document.createElement("h4");
-  questTitle.textContent = quest.title;
-  // rewards
-  const questRewards = document.createElement("div");
-  questRewards.classList.add("quest-rewards");
-  Object.entries(quest.xpRewards).forEach((entry) => {
-    const p = document.createElement("p");
-    p.textContent = `+ ${entry[1]} ${entry[0]}`;
-    if (entry[1] !== 0) {
-      questRewards.append(p);
-    }
-  });
-
-  //categories
-  const questCategories = document.createElement("div");
-  questCategories.classList.add("quest-categories");
-  quest.tags.forEach((tag) => {
-    const p = document.createElement("p");
-    p.classList.add("tag");
-    p.textContent = tag;
-    questCategories.append(p);
-  });
-
-  questInfo.append(questTitle, questRewards, questCategories);
-
-  card.append(questImg, questInfo);
-
-  // link to quest detail page
-  card.addEventListener("click", (e) => {
-    e.preventDefault();
-    const questId = quest._id;
-    console.log(questId);
-    window.location.href = `/pages/quest.html?id=${questId}`;
-  });
-  return card;
 }
 
 async function populateTopQuests() {

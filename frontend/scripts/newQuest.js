@@ -8,7 +8,18 @@ const submitButton = form.querySelector(".primary-button");
 submitButton.addEventListener("click", async (e) => {
   form.checkValidity();
   form.reportValidity();
-  e.preventDefault();
+  // Prevent form submission if invalid
+  if (!form.checkValidity()) {
+    e.preventDefault();
+    return;
+  } else {
+    submitNewQuest(e);
+  }
+  
+});
+
+function submitNewQuest(e) {
+    e.preventDefault();
   const formData = new FormData(form);
   console.log(formData.get("title"));
   const title = formData.get("title").trim();
@@ -66,4 +77,4 @@ submitButton.addEventListener("click", async (e) => {
   } else {
     console.log("Error creating quest:", result.message);
   }
-});
+}

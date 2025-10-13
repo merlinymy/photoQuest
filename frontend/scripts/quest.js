@@ -13,8 +13,13 @@ const submissionWrapper = buildQuestPage();
 getInitialSubmissions();
 
 window.addEventListener("scroll", () => {
-  if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 500) {
-    getMoreSubmissions();
+  console.log("window.innerHeight", window.innerHeight);
+  console.log("window.scrollY", window.scrollY);
+  console.log("document.body.offsetHeight", document.body.offsetHeight);
+  if (window.scrollY + window.innerHeight >= document.body.offsetHeight) {
+    setTimeout(() => {
+      getMoreSubmissions();
+    }, 500);
   }
 });
 async function getInitialSubmissions() {
@@ -102,10 +107,18 @@ function buildQuestSection() {
     startAt,
     endAt,
   });
+  const imgContainer = document.createElement("div");
+  imgContainer.classList.add("quest-image-container");
+  const imgEle = document.createElement("img");
+  imgEle.classList.add("quest-image");
+  imgEle.src = imageUrl;
+  imgEle.alt = title;
+  imgContainer.appendChild(imgEle);
   const questSection = document.createElement("section");
   questSection.classList.add("quest-section");
   questSection.id = "quest-section";
   document.body.appendChild(questSection);
+  questSection.appendChild(imgContainer);
 
   const questTextInfo = document.createElement("div");
   questTextInfo.classList.add("quest-text-info");
@@ -130,16 +143,6 @@ function buildQuestSection() {
       questsxpRewards.appendChild(xpEle);
     });
   questSection.appendChild(questsxpRewards);
-
-  const imgContainer = document.createElement("div");
-  imgContainer.classList.add("quest-image-container");
-  questSection.appendChild(imgContainer);
-  const imgEle = document.createElement("img");
-  imgEle.classList.add("quest-image");
-  imgEle.src = imageUrl;
-  imgEle.alt = title;
-  imgContainer.appendChild(imgEle);
-  questSection.appendChild(imgContainer);
 
   const titleEle = document.createElement("h1");
   titleEle.innerText = title;

@@ -13,3 +13,12 @@ PhotoQuest is a community web app designed to improve photography skills through
 - **Competitive Creator**: A user who loves contests. User Story: As a competitive person, I want to see a leaderboard or voting on the best submissions for each challenge so that I feel motivated to put forth my best work and perhaps earn recognition.
 
 - **Community Mentor**: A photography enthusiast who enjoys teaching. User Story: As a supportive community member, I want to comment on and give constructive feedback to others’ challenge photos so that I can help beginners learn and engage with fellow photographers.
+
+### Dev log:
+
+bugs and fixes:
+
+- pages/dashboard.html submission, quests should display total number, not paginated one
+- priority p3
+
+- pagination does not work for pages/dashboard.html submission, quests
