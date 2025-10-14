@@ -13,13 +13,12 @@ submitButton.addEventListener("click", async (e) => {
     e.preventDefault();
     return;
   } else {
-    submitNewQuest(e);
+    await submitNewQuest(e);
   }
-  
 });
 
-function submitNewQuest(e) {
-    e.preventDefault();
+async function submitNewQuest(e) {
+  e.preventDefault();
   const formData = new FormData(form);
   console.log(formData.get("title"));
   const title = formData.get("title").trim();

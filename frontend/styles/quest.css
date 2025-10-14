@@ -104,6 +104,47 @@ h1 {
   max-width: 60ch;
 }
 
+.quest-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: clamp(10px, 2vw, 18px);
+  align-items: center;
+}
+
+.quest-action-button {
+  appearance: none;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--accent), #ff9b52);
+  color: #0a0a0a;
+  font-weight: 700;
+  font-size: 0.9rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 12px 24px;
+  cursor: pointer;
+  box-shadow: 0 14px 34px rgba(247, 126, 45, 0.35);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+.quest-action-button:hover,
+.quest-action-button:focus-visible {
+  transform: translateY(-1px);
+  box-shadow: 0 20px 40px rgba(247, 126, 45, 0.4);
+  filter: brightness(1.05);
+}
+
+.quest-action-button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.quest-action-button:active {
+  transform: translateY(0);
+  box-shadow: 0 10px 24px rgba(247, 126, 45, 0.3);
+}
+
 .quest-creator,
 .quest-end-at {
   align-self: flex-end;

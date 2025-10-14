@@ -1,4 +1,9 @@
-import { buildQuestCard, createChipRow, formatNumber, prettifySkillName } from "../components/QuestCard.js";
+import {
+  buildQuestCard,
+  createChipRow,
+  formatNumber,
+  prettifySkillName,
+} from "../components/QuestCard.js";
 import { addHeader } from "../components/utils.js";
 
 addHeader();
@@ -33,7 +38,7 @@ async function getUserSubmissions() {
       dashboardState.joinedQuestIds.add(challengeId);
       dashboardState.pendingJoinedQuestIds.push(challengeId);
       console.debug(
-        `[submissions] queued new quest id from submission: ${challengeId}`,
+        `[submissions] queued new quest id from submission: ${challengeId}`
       );
     }
   });
@@ -132,9 +137,7 @@ function buildProfilePageStructure(profileData) {
   dashboardState.questsCreated = [...createdList];
 
   const questIdSet = new Set(
-    dashboardState.questsJoined
-      .map((quest) => quest?._id)
-      .filter(Boolean),
+    dashboardState.questsJoined.map((quest) => quest?._id).filter(Boolean)
   );
   dashboardState.pendingJoinedQuestIds = [];
   dashboardState.submissions.forEach((submission) => {
@@ -160,8 +163,7 @@ function buildProfilePageStructure(profileData) {
       id: "stats",
       label: "Stats",
       panelClass: "stats-panel",
-      builder: () =>
-        buildStatsPanel(userInfo, joinedList, submissions),
+      builder: () => buildStatsPanel(userInfo, joinedList, submissions),
     },
     {
       id: "submissions",
@@ -208,8 +210,7 @@ function buildHeroSection(userInfo) {
   const avatar = document.createElement("img");
   avatar.className = "profile-avatar";
   avatar.src =
-    avatarUrl ||
-    "https://dummyimage.com/200x200/1a1a1a/ffffff&text=Profile";
+    avatarUrl || "https://dummyimage.com/200x200/1a1a1a/ffffff&text=Profile";
   avatar.alt = `${username}'s avatar`;
 
   const identity = document.createElement("div");
@@ -316,7 +317,7 @@ function buildTabSection(tabs) {
     panelsWrapper
       .querySelectorAll(".tab-panel")
       .forEach((panel) =>
-        panel.classList.toggle("active", panel.dataset.tab === id),
+        panel.classList.toggle("active", panel.dataset.tab === id)
       );
   }
 
@@ -348,11 +349,14 @@ function createInsightGrid(skills, stats, submissions, joinedList) {
   const metrics = [];
 
   const totalSubmissions = stats.submissionsCount ?? submissions.length ?? 0;
-  metrics.push({ label: "Total Submissions", value: formatNumber(totalSubmissions) });
+  metrics.push({
+    label: "Total Submissions",
+    value: formatNumber(totalSubmissions),
+  });
 
   const totalLikes = submissions.reduce(
     (acc, submission) => acc + (submission?.counters?.likes ?? 0),
-    0,
+    0
   );
   metrics.push({ label: "Total Likes", value: formatNumber(totalLikes) });
 
@@ -530,13 +534,7 @@ function buildSubmissionsPanel(submissions = []) {
 }
 
 function buildSubmissionCard(submission) {
-  const {
-    title,
-    imageUrl,
-    counters = {},
-    createdAt,
-    exif = {},
-  } = submission;
+  const { title, imageUrl, counters = {}, createdAt, exif = {} } = submission;
 
   const card = document.createElement("article");
   card.className = "entry-card submission-card";
@@ -593,10 +591,61 @@ function buildQuestsPanel(quests = [], type = "joined") {
       ? "You haven't joined any quests yet."
       : "You haven't created any quests yet.";
 
+  const renderCard =
+    type === "created"
+      ? (quest) =>
+          buildQuestCard(quest, {
+            showDelete: true,
+            onDelete: async (questId, questData, card, triggerEvent) => {
+              try {
+                // Call backend to delete quest by id
+                const resp = await fetch(
+                  `/quests/${encodeURIComponent(questId)}`,
+                  {
+                    method: "DELETE",
+                  }
+                );
+                if (!resp.ok) {
+                  console.error("Failed to delete quest", questId, resp.status);
+                  // Keep card if backend failed
+                  return false;
+                }
+
+                // Remove from local dashboard state if present
+                if (
+                  dashboardState &&
+                  Array.isArray(dashboardState.questsCreated)
+                ) {
+                  dashboardState.questsCreated =
+                    dashboardState.questsCreated.filter(
+                      (q) =>
+                        (q?._id ?? q?.id ?? q?.questId ?? q?.challengeId) !==
+                        questId
+                    );
+                }
+
+                // Notify listeners deletion succeeded
+                card.dispatchEvent(
+                  new CustomEvent("dashboard:quest-deleted", {
+                    bubbles: true,
+                    detail: { questId, quest: questData },
+                  })
+                );
+
+                // Return truthy so QuestCard removes the element
+                return true;
+              } catch (err) {
+                console.error("Error deleting quest", questId, err);
+                return false;
+              }
+            },
+          })
+      : buildQuestCard;
+
   return createPaginatedPanel({
     key: type === "joined" ? "questsJoined" : "questsCreated",
     items: quests,
-    renderItem: buildQuestCard,
+    renderItem: renderCard,
     wrapperClass: "quests-panel-content",
     gridClass: "quests-grid",
     emptyMessage,
@@ -777,14 +826,11 @@ function createPaginatedPanel({
       state.observer.unobserve(state.sentinel);
     }
 
-    const slice = state.items.slice(
-      state.index,
-      state.index + state.chunkSize,
-    );
+    const slice = state.items.slice(state.index, state.index + state.chunkSize);
     renderSlice(slice);
     state.index += slice.length;
     console.debug(
-      `[${key}] appended ${slice.length} items; next index=${state.index}`,
+      `[${key}] appended ${slice.length} items; next index=${state.index}`
     );
     state.loading = false;
 
@@ -812,7 +858,7 @@ function createPaginatedPanel({
         }
       });
     },
-    { root: null, rootMargin: "200px 0px" },
+    { root: null, rootMargin: "200px 0px" }
   );
 
   console.debug(`[${key}] initializing pagination`);
@@ -1374,6 +1420,51 @@ main.dashboard {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+}
+
+.quest-card {
+  position: relative;
+}
+
+.quest-card-action {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(10, 10, 10, 0.65);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  cursor: pointer;
+  backdrop-filter: blur(5px);
+  transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.quest-card-action:hover,
+.quest-card-action:focus-visible {
+  transform: translateY(-1px);
+  border-color: rgba(247, 126, 45, 0.55);
+  background: rgba(247, 126, 45, 0.18);
+  color: var(--text);
+  box-shadow: 0 12px 28px rgba(247, 126, 45, 0.25);
+}
+
+.quest-card-action svg {
+  width: 14px;
+  height: 14px;
+  display: block;
+}
+
+.quest-card-action svg path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .entry-thumb-wrapper {
