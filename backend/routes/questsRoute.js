@@ -4,9 +4,17 @@ import { getCategories } from "../db/quests/getCategories.js";
 import { getPopular } from "../db/quests/getPopular.js";
 import { getQuestsByCreatorId } from "../db/quests/getQuestsByUserId.js";
 import { getQuestsByIdArray } from "../db/quests/getQuestsByIdArray.js";
+import { deleteQuestByQuestId } from "../db/quests/deleteQuestByQuestId.js";
 
 export const questsRouter = e.Router();
 questsRouter.use(e.static("../../frontend"));
+
+// delete quest by questId
+questsRouter.delete("/:id", async (req, res) => {
+  const client = await mongoClient();
+  const result = await deleteQuestByQuestId(client, req.params.id);
+  res.json({ result });
+});
 
 questsRouter.get("/categories", async (req, res) => {
   const client = await mongoClient();

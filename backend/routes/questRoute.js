@@ -1,5 +1,5 @@
 import e from "express";
-import { getQuestById } from "../db/quest/getQuestById.js";
+import { getQuestById } from "../db/quests/getQuestById.js";
 import { mongoClient } from "../db/mogoClient.js";
 
 export const questRouter = e.Router();
