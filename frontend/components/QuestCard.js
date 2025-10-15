@@ -208,7 +208,6 @@ export function formatDateRange(start, end) {
 
 export function buildQuestCard(quest, options = {}) {
   ensureQuestCardStyles();
-
   const {
     questId: explicitQuestId,
     onNavigate,

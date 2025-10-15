@@ -4,7 +4,7 @@ import { getCategories } from "../db/quests/getCategories.js";
 import { getPopular } from "../db/quests/getPopular.js";
 import { getQuestsByCreatorId } from "../db/quests/getQuestsByUserId.js";
 import { getQuestsByIdArray } from "../db/quests/getQuestsByIdArray.js";
-import { ObjectId } from "mongodb";
+import { normalizeId } from "../db/utils/normalizeId.js";
 
 export const questsRouter = e.Router();
 questsRouter.use(e.static("../../frontend"));
@@ -17,8 +17,7 @@ questsRouter.delete("/:id", async (req, res) => {
     }
     const client = await mongoClient();
 
-    const questId =
-      req.params.id.length === 24 ? new ObjectId(req.params.id) : req.params.id;
+    const questId = normalizeId(req.params.id);
 
     const result = await client
       .db("photo_quest")
@@ -71,17 +70,6 @@ questsRouter.post("/newQuest", async (req, res) => {
     imageUrl,
     tip,
   } = req.body;
-  console.log({
-    title,
-    description,
-    creatorId,
-    xpRewards,
-    endAt,
-    tags,
-    counters,
-    imageUrl,
-    tip,
-  });
   const client = await mongoClient();
   try {
     await client.db("photo_quest").collection("challenges").insertOne({

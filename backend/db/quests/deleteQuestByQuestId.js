@@ -3,10 +3,10 @@
  * https://mongodb.github.io/node-mongodb-native
  */
 
-import { ObjectId } from "mongodb";
+import { normalizeId } from "../utils/normalizeId.js";
 
 export const deleteQuestByQuestId = async (client, questId) => {
-  const id = questId.length === 24 ? new ObjectId(questId) : questId;
+  const id = normalizeId(questId);
 
   const agg = [
     {

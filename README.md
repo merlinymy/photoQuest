@@ -16,9 +16,22 @@ PhotoQuest is a community web app designed to improve photography skills through
 
 ### Dev log:
 
+Todo:
+
+- [x] Add delete button to quest-cards in Quests Created tab in dashboard.html (this ensures deletion only if user is logged in and created the quest-cards)
+- [x] Add an add submission button to quest.html
+- [x] Implement delete quest by id (backend done, working on frontend)
+- [x] Implement submissions backend. (Create✅, Read✅, Update✅, Delete✅)
+- [x] Implement comments backend. (Create✅, Read✅, Update✅, Delete✅)
+
+improvements:
+
+- add user confirmation before and after delete, and post operations
+
 bugs and fixes:
 
 - pages/dashboard.html submission, quests should display total number, not paginated one
 - priority p3
 
 - pagination does not work for pages/dashboard.html submission, quests
+- priority p1
