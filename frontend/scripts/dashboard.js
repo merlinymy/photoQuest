@@ -25,10 +25,11 @@ if (userProfile) {
 }
 
 async function getUserSubmissions() {
-  // Backend now returns all submissions at once
-  const submissions = await (await fetch(`/submissions/${userId}`)).json();
-  // Reset pagination state since server returns everything
-  skip = 0;
+  // Fetch paginated submissions for infinite scroll
+  const submissions = await (
+    await fetch(`/submissions/${userId}?skip=${skip}&limit=${limit}`)
+  ).json();
+  skip += limit;
   submissions.forEach((submission) => {
     const challengeId = submission?.challengeId;
     if (!challengeId) {
@@ -684,8 +685,12 @@ function createEmptyPanel(message) {
 }
 
 async function fetchMoreSubmissions() {
-  console.debug("[submissions] all submissions already loaded");
-  return [];
+  console.debug("[submissions] fetching next chunk from server");
+  const newItems = await getUserSubmissions();
+  if (Array.isArray(newItems) && newItems.length) {
+    dashboardState.submissions.push(...newItems);
+  }
+  return Array.isArray(newItems) ? newItems : [];
 }
 
 async function fetchMoreJoinedQuests() {

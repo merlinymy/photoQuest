@@ -9,7 +9,8 @@ export const submissionRoute = e.Router();
 submissionRoute.get("/:userId", async (req, res) => {
   const client = await mongoClient();
   const userId = req.params.userId;
-  const data = await getSubmissionsByUserId(client, userId);
+  const { skip, limit } = req.query;
+  const data = await getSubmissionsByUserId(client, userId, +skip, +limit);
   res.json(data);
 });
 
@@ -17,7 +18,9 @@ submissionRoute.get("/:userId", async (req, res) => {
 submissionRoute.get("/byQuestId/:questId", async (req, res) => {
   const client = await mongoClient();
   const questId = normalizeId(req.params.questId);
-  const data = await getSubmissionsByQuestId(client, questId);
+  const { skip, limit } = req.query;
+  const data = await getSubmissionsByQuestId(client, questId, +skip, +limit);
+  console.log("questId, skip and limit", questId, skip, limit);
   res.json(data);
 });
 

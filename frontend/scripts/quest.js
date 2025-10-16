@@ -1,7 +1,8 @@
 import { addHeader } from "../components/utils.js";
 
 addHeader();
-// Pagination removed: server returns all submissions for a quest
+let skip = 0;
+let limit = 20;
 
 const questId = new URLSearchParams(window.location.search).get("id");
 
@@ -9,12 +10,28 @@ const questInfo = await (await fetch(`/quest/${questId}`)).json();
 
 const creatorId = questInfo.data[0].creatorId;
 const submissionWrapper = buildQuestPage();
-getAllSubmissions();
+getInitialSubmissions();
 
-// Infinite scroll disabled since backend returns all
-async function getAllSubmissions() {
-  const submissions = await getSubmissions(questId);
+window.addEventListener("scroll", () => {
+  console.log("window.innerHeight", window.innerHeight);
+  console.log("window.scrollY", window.scrollY);
+  console.log("document.body.offsetHeight", document.body.offsetHeight);
+  if (window.scrollY + window.innerHeight >= document.body.offsetHeight) {
+    setTimeout(() => {
+      getMoreSubmissions();
+    }, 500);
+  }
+});
+async function getInitialSubmissions() {
+  const submissions = await getSubmissions(questId, skip, limit);
   populateSubmissions(submissions);
+  skip += limit;
+}
+
+async function getMoreSubmissions() {
+  const submissions = await getSubmissions(questId, skip, limit);
+  populateSubmissions(submissions);
+  skip += limit;
 }
 function populateSubmissions(submissions) {
   if (submissions && submissions.length > 0) {
@@ -69,8 +86,10 @@ function populateSubmissions(submissions) {
   }
 }
 
-async function getSubmissions(questId) {
-  const response = await fetch(`/submissions/byQuestId/${questId}`);
+async function getSubmissions(questId, skip, limit) {
+  const response = await fetch(
+    `/submissions/byQuestId/${questId}?skip=${skip}&limit=${limit}`,
+  );
   return response.json();
 }
 
