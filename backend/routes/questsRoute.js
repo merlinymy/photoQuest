@@ -42,18 +42,33 @@ questsRouter.get("/popular", async (req, res) => {
   res.json({ data });
 });
 
-questsRouter.post("/joined/byIdArr", async (req, res) => {
-  const idArr = req.body.tags;
-  console.log("idArr", idArr);
+questsRouter.post("/joined/questIdArray", async (req, res) => {
+  const userId = normalizeId(req.body.userId);
+  const questIdArray = req.body.questIdArray;
+
+  if (!userId || !Array.isArray(questIdArray)) {
+    return res.status(400).json({ error: "Invalid request data" });
+  }
+
   const client = await mongoClient();
-  const data = await getQuestsByIdArray(client, idArr);
+  const data = await client
+    .db("photo_quest")
+    .collection("challenges")
+    .find({ _id: { $in: questIdArray.map((id) => normalizeId(id)) } })
+    .sort({ createdAt: -1 })
+    .toArray();
   res.json(data);
 });
 
 questsRouter.get("/:userId", async (req, res) => {
   const userId = req.params.userId;
   const client = await mongoClient();
-  const data = await getQuestsByCreatorId(client, userId);
+  const data = await client
+    .db("photo_quest")
+    .collection("challenges")
+    .find({ creatorId: userId })
+    .sort({ createdAt: -1 })
+    .toArray();
   res.json({ data });
 });
 

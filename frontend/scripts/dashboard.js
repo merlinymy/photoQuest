@@ -25,10 +25,10 @@ if (userProfile) {
 }
 
 async function getUserSubmissions() {
-  const submissions = await (
-    await fetch(`/submissions/${userId}?skip=${skip}&limit=${limit}`)
-  ).json();
-  skip += limit;
+  // Backend now returns all submissions at once
+  const submissions = await (await fetch(`/submissions/${userId}`)).json();
+  // Reset pagination state since server returns everything
+  skip = 0;
   submissions.forEach((submission) => {
     const challengeId = submission?.challengeId;
     if (!challengeId) {
@@ -38,7 +38,7 @@ async function getUserSubmissions() {
       dashboardState.joinedQuestIds.add(challengeId);
       dashboardState.pendingJoinedQuestIds.push(challengeId);
       console.debug(
-        `[submissions] queued new quest id from submission: ${challengeId}`,
+        `[submissions] queued new quest id from submission: ${challengeId}`
       );
     }
   });
@@ -55,15 +55,21 @@ async function getUserJoinedQuests(ids) {
   }
 
   const quests = await (
-    await fetch(`/quests/joined/byIdArr`, {
+    await fetch(`/quests/joined/questIdArray`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ tags: questIds }),
+      body: JSON.stringify({ userId, questIdArray: questIds }),
     })
   ).json();
-  if (!ids || !ids.length) {
-    dashboardState.pendingJoinedQuestIds = [];
+
+  // Remove fetched ids from pending list
+  if (Array.isArray(ids) && ids.length) {
+    const toRemove = new Set(ids.map(String));
+    dashboardState.pendingJoinedQuestIds = dashboardState.pendingJoinedQuestIds.filter(
+      (id) => !toRemove.has(String(id)),
+    );
   }
+
   return quests;
 }
 
@@ -76,7 +82,11 @@ async function getUserProfile() {
   const submissions = await getUserSubmissions();
 
   const user = await (await fetch(`/user/${userId}`)).json();
-  const questsJoined = await getUserJoinedQuests();
+  const questsJoined = await getUserJoinedQuests(
+    Array.isArray(dashboardState.pendingJoinedQuestIds)
+      ? [...dashboardState.pendingJoinedQuestIds]
+      : []
+  );
   const questsCreated = await getUserCreatedQuests();
   console.log({ user, questsJoined, submissions, questsCreated });
   return { user, questsJoined, submissions, questsCreated };
@@ -137,7 +147,7 @@ function buildProfilePageStructure(profileData) {
   dashboardState.questsCreated = [...createdList];
 
   const questIdSet = new Set(
-    dashboardState.questsJoined.map((quest) => quest?._id).filter(Boolean),
+    dashboardState.questsJoined.map((quest) => quest?._id).filter(Boolean)
   );
   dashboardState.pendingJoinedQuestIds = [];
   dashboardState.submissions.forEach((submission) => {
@@ -229,10 +239,22 @@ function buildHeroSection(userInfo) {
   const statsGrid = document.createElement("div");
   statsGrid.className = "stats-grid";
 
+  // Derive live stats from loaded data to reflect actual values
+  const submissionsCount = Array.isArray(dashboardState.submissions)
+    ? dashboardState.submissions.length
+    : 0;
+  const questsJoinedCount = Array.isArray(dashboardState.questsJoined)
+    ? dashboardState.questsJoined.length
+    : 0;
+  // Treat "Quests Started" as quests the user created
+  const questsStartedCount = Array.isArray(dashboardState.questsCreated)
+    ? dashboardState.questsCreated.length
+    : 0;
+
   const statEntries = [
-    { label: "Submissions", value: stats.submissionsCount ?? 0 },
-    { label: "Quests Joined", value: stats.questsJoined ?? 0 },
-    { label: "Quests Started", value: stats.questsStarted ?? 0 },
+    { label: "Submissions", value: submissionsCount },
+    { label: "Quests Joined", value: questsJoinedCount },
+    { label: "Quests Started", value: questsStartedCount },
   ];
 
   statEntries.forEach(({ label, value }) => {
@@ -317,7 +339,7 @@ function buildTabSection(tabs) {
     panelsWrapper
       .querySelectorAll(".tab-panel")
       .forEach((panel) =>
-        panel.classList.toggle("active", panel.dataset.tab === id),
+        panel.classList.toggle("active", panel.dataset.tab === id)
       );
   }
 
@@ -356,7 +378,7 @@ function createInsightGrid(skills, stats, submissions, joinedList) {
 
   const totalLikes = submissions.reduce(
     (acc, submission) => acc + (submission?.counters?.likes ?? 0),
-    0,
+    0
   );
   metrics.push({ label: "Total Likes", value: formatNumber(totalLikes) });
 
@@ -570,11 +592,11 @@ function buildSubmissionCard(submission) {
   body.append(titleEl, meta);
 
   const exifItems = [];
-  if (exif.camera) exifItems.push(exif.camera);
-  if (exif.f) exifItems.push(`ƒ/${exif.f}`);
-  if (exif.iso) exifItems.push(`ISO ${exif.iso}`);
-  if (exif.shutter) exifItems.push(exif.shutter);
-  if (exif.focal) exifItems.push(`${exif.focal}mm`);
+  if (exif?.camera) exifItems.push(exif.camera);
+  if (exif?.f) exifItems.push(`ƒ/${exif.f}`);
+  if (exif?.iso) exifItems.push(`ISO ${exif.iso}`);
+  if (exif?.shutter) exifItems.push(exif.shutter);
+  if (exif?.focal) exifItems.push(`${exif.focal}mm`);
 
   const exifRow = createChipRow(exifItems, "muted");
   if (exifRow) {
@@ -603,7 +625,7 @@ function buildQuestsPanel(quests = [], type = "joined") {
                   `/quests/${encodeURIComponent(questId)}`,
                   {
                     method: "DELETE",
-                  },
+                  }
                 );
                 if (!resp.ok) {
                   console.error("Failed to delete quest", questId, resp.status);
@@ -620,7 +642,7 @@ function buildQuestsPanel(quests = [], type = "joined") {
                     dashboardState.questsCreated.filter(
                       (q) =>
                         (q?._id ?? q?.id ?? q?.questId ?? q?.challengeId) !==
-                        questId,
+                        questId
                     );
                 }
 
@@ -629,7 +651,7 @@ function buildQuestsPanel(quests = [], type = "joined") {
                   new CustomEvent("dashboard:quest-deleted", {
                     bubbles: true,
                     detail: { questId, quest: questData },
-                  }),
+                  })
                 );
 
                 // Return truthy so QuestCard removes the element
@@ -662,12 +684,8 @@ function createEmptyPanel(message) {
 }
 
 async function fetchMoreSubmissions() {
-  console.debug("[submissions] fetching next chunk from server");
-  const newItems = await getUserSubmissions();
-  if (Array.isArray(newItems) && newItems.length) {
-    dashboardState.submissions.push(...newItems);
-  }
-  return Array.isArray(newItems) ? newItems : [];
+  console.debug("[submissions] all submissions already loaded");
+  return [];
 }
 
 async function fetchMoreJoinedQuests() {
@@ -830,7 +848,7 @@ function createPaginatedPanel({
     renderSlice(slice);
     state.index += slice.length;
     console.debug(
-      `[${key}] appended ${slice.length} items; next index=${state.index}`,
+      `[${key}] appended ${slice.length} items; next index=${state.index}`
     );
     state.loading = false;
 
@@ -858,7 +876,7 @@ function createPaginatedPanel({
         }
       });
     },
-    { root: null, rootMargin: "200px 0px" },
+    { root: null, rootMargin: "200px 0px" }
   );
 
   console.debug(`[${key}] initializing pagination`);
@@ -908,7 +926,7 @@ function buildRadarChart(skillEntries, maxValue) {
           center,
           center,
           radius * ratio,
-          angle,
+          angle
         );
         return `${x},${y}`;
       })
@@ -940,7 +958,7 @@ function buildRadarChart(skillEntries, maxValue) {
   const dataPolygon = document.createElementNS(svgNS, "polygon");
   dataPolygon.setAttribute(
     "points",
-    dataPoints.map(({ x, y }) => `${x},${y}`).join(" "),
+    dataPoints.map(({ x, y }) => `${x},${y}`).join(" ")
   );
   dataPolygon.classList.add("radar-data");
   svg.appendChild(dataPolygon);

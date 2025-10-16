@@ -2,6 +2,12 @@
 
 PhotoQuest is a community web app designed to improve photography skills through fun challenges. Moderators or users can create photo quests – themed challenges such as “Golden Hour Cityscape” or “Macro Texture Challenge”. Photographers then submit their photos for each challenge, showcasing their interpretation of the theme. Users can browse the gallery of submissions, leave comments or likes, and learn from others’ techniques. This platform encourages creativity and learning by prompting photographers to step outside their comfort zone and try new ideas, with a supportive community providing feedback and inspiration.
 
+## User Personas & Stories:
+
+- **Aspiring Photographer**: A college student new to photography. User Story: As a budding photographer, I want to attempt beginner-friendly photo challenges (with clear themes and tips) so that I can practice and improve my skills one step at a time.
+
+- **Challenge Organizer (Admin)**: An expert setting up quests. User Story: As an admin or challenge creator, I want an easy interface to create new photo challenges (with descriptions and deadlines) so that I can regularly provide fresh themes and keep the community active.
+
 ## Author & Class
 
 - Author: Mengyu Yang
@@ -86,12 +92,6 @@ Note: Supabase is configured with Row Level Security (RLS) in this project; fron
 - ESLint + Prettier are configured; run `npx eslint . --ext js,mjs,cjs --fix` and `npx prettier . --write` before deployment.
 - MongoDB assumed available locally at `mongodb://localhost:27017/`.
 - Static frontend served from `frontend/` by Express at `http://localhost:3004`.
-
-## User Personas & Stories:
-
-- **Aspiring Photographer**: A college student new to photography. User Story: As a budding photographer, I want to attempt beginner-friendly photo challenges (with clear themes and tips) so that I can practice and improve my skills one step at a time.
-
-- **Challenge Organizer (Admin)**: An expert setting up quests. User Story: As an admin or challenge creator, I want an easy interface to create new photo challenges (with descriptions and deadlines) so that I can regularly provide fresh themes and keep the community active.
 
 ### Dev log:
 
