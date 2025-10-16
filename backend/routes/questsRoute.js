@@ -1,5 +1,5 @@
 import e from "express";
-import { mongoClient } from "../db/mogoClient.js";
+import { mongoClient } from "../db/mongoClient.js";
 import { getCategories } from "../db/quests/getCategories.js";
 import { getPopular } from "../db/quests/getPopular.js";
 import { getQuestsByCreatorId } from "../db/quests/getQuestsByUserId.js";

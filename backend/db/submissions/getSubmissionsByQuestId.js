@@ -7,7 +7,7 @@ export const getSubmissionsByQuestId = async (
   client,
   questId,
   skip = 0,
-  limit = 20
+  limit = 20,
 ) => {
   const filter = {
     challengeId: questId,

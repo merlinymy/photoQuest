@@ -38,7 +38,7 @@ async function getUserSubmissions() {
       dashboardState.joinedQuestIds.add(challengeId);
       dashboardState.pendingJoinedQuestIds.push(challengeId);
       console.debug(
-        `[submissions] queued new quest id from submission: ${challengeId}`
+        `[submissions] queued new quest id from submission: ${challengeId}`,
       );
     }
   });
@@ -137,7 +137,7 @@ function buildProfilePageStructure(profileData) {
   dashboardState.questsCreated = [...createdList];
 
   const questIdSet = new Set(
-    dashboardState.questsJoined.map((quest) => quest?._id).filter(Boolean)
+    dashboardState.questsJoined.map((quest) => quest?._id).filter(Boolean),
   );
   dashboardState.pendingJoinedQuestIds = [];
   dashboardState.submissions.forEach((submission) => {
@@ -317,7 +317,7 @@ function buildTabSection(tabs) {
     panelsWrapper
       .querySelectorAll(".tab-panel")
       .forEach((panel) =>
-        panel.classList.toggle("active", panel.dataset.tab === id)
+        panel.classList.toggle("active", panel.dataset.tab === id),
       );
   }
 
@@ -356,7 +356,7 @@ function createInsightGrid(skills, stats, submissions, joinedList) {
 
   const totalLikes = submissions.reduce(
     (acc, submission) => acc + (submission?.counters?.likes ?? 0),
-    0
+    0,
   );
   metrics.push({ label: "Total Likes", value: formatNumber(totalLikes) });
 
@@ -596,14 +596,14 @@ function buildQuestsPanel(quests = [], type = "joined") {
       ? (quest) =>
           buildQuestCard(quest, {
             showDelete: true,
-            onDelete: async (questId, questData, card, triggerEvent) => {
+            onDelete: async (questId, questData, card) => {
               try {
                 // Call backend to delete quest by id
                 const resp = await fetch(
                   `/quests/${encodeURIComponent(questId)}`,
                   {
                     method: "DELETE",
-                  }
+                  },
                 );
                 if (!resp.ok) {
                   console.error("Failed to delete quest", questId, resp.status);
@@ -620,7 +620,7 @@ function buildQuestsPanel(quests = [], type = "joined") {
                     dashboardState.questsCreated.filter(
                       (q) =>
                         (q?._id ?? q?.id ?? q?.questId ?? q?.challengeId) !==
-                        questId
+                        questId,
                     );
                 }
 
@@ -629,7 +629,7 @@ function buildQuestsPanel(quests = [], type = "joined") {
                   new CustomEvent("dashboard:quest-deleted", {
                     bubbles: true,
                     detail: { questId, quest: questData },
-                  })
+                  }),
                 );
 
                 // Return truthy so QuestCard removes the element
@@ -830,7 +830,7 @@ function createPaginatedPanel({
     renderSlice(slice);
     state.index += slice.length;
     console.debug(
-      `[${key}] appended ${slice.length} items; next index=${state.index}`
+      `[${key}] appended ${slice.length} items; next index=${state.index}`,
     );
     state.loading = false;
 
@@ -858,7 +858,7 @@ function createPaginatedPanel({
         }
       });
     },
-    { root: null, rootMargin: "200px 0px" }
+    { root: null, rootMargin: "200px 0px" },
   );
 
   console.debug(`[${key}] initializing pagination`);
@@ -908,7 +908,7 @@ function buildRadarChart(skillEntries, maxValue) {
           center,
           center,
           radius * ratio,
-          angle
+          angle,
         );
         return `${x},${y}`;
       })
@@ -919,7 +919,7 @@ function buildRadarChart(skillEntries, maxValue) {
     svg.appendChild(polygon);
   }
 
-  skillEntries.forEach(([, value], index) => {
+  skillEntries.forEach((_, index) => {
     const angle = getAngle(index, totalAxes);
     const { x, y } = polarToCartesian(center, center, radius, angle);
     const line = document.createElementNS(svgNS, "line");
@@ -940,7 +940,7 @@ function buildRadarChart(skillEntries, maxValue) {
   const dataPolygon = document.createElementNS(svgNS, "polygon");
   dataPolygon.setAttribute(
     "points",
-    dataPoints.map(({ x, y }) => `${x},${y}`).join(" ")
+    dataPoints.map(({ x, y }) => `${x},${y}`).join(" "),
   );
   dataPolygon.classList.add("radar-data");
   svg.appendChild(dataPolygon);

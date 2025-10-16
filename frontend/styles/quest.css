@@ -125,7 +125,10 @@ h1 {
   padding: 12px 24px;
   cursor: pointer;
   box-shadow: 0 14px 34px rgba(247, 126, 45, 0.35);
-  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    filter 0.2s ease;
 }
 
 .quest-action-button:hover,

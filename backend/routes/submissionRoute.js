@@ -1,7 +1,7 @@
 import e from "express";
-import { getSubmissionsByUserId } from "../db/sumbissions/getSubmissionsByUserId.js";
-import { mongoClient } from "../db/mogoClient.js";
-import { getSubmissionsByQuestId } from "../db/sumbissions/getSubmissionsByQuestId.js";
+import { getSubmissionsByUserId } from "../db/submissions/getSubmissionsByUserId.js";
+import { mongoClient } from "../db/mongoClient.js";
+import { getSubmissionsByQuestId } from "../db/submissions/getSubmissionsByQuestId.js";
 import { normalizeId } from "../db/utils/normalizeId.js";
 
 export const submissionRoute = e.Router();

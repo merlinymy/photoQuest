@@ -1,6 +1,6 @@
 import e from "express";
 
-import { mongoClient } from "../db/mogoClient.js";
+import { mongoClient } from "../db/mongoClient.js";
 import { normalizeId } from "../db/utils/normalizeId.js";
 
 export const commentsRoute = e.Router();

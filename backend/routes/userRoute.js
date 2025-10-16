@@ -1,6 +1,6 @@
 import e from "express";
 import { getIdbyEmail } from "../db/user/getIdbyEmail.js";
-import { mongoClient } from "../db/mogoClient.js";
+import { mongoClient } from "../db/mongoClient.js";
 import { getUserById } from "../db/user/getUserById.js";
 
 export const userRouter = e.Router();

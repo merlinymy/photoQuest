@@ -279,7 +279,7 @@ export function buildQuestCard(quest, options = {}) {
 
   const tagsRow = createChipRow(
     (tags || []).slice(0, 6).map((tag) => `#${tag}`),
-    "muted"
+    "muted",
   );
   if (tagsRow) {
     body.appendChild(tagsRow);
@@ -312,7 +312,7 @@ export function buildQuestCard(quest, options = {}) {
     deleteButton.className = "quest-card-action quest-card-action--delete";
     deleteButton.setAttribute(
       "aria-label",
-      title ? `Delete quest: ${title}` : "Delete quest"
+      title ? `Delete quest: ${title}` : "Delete quest",
     );
     deleteButton.innerHTML = `
       <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
