@@ -199,15 +199,15 @@ async function onSubmitComment(e) {
         body,
         userId,
         createdAt: new Date().toISOString(),
-      }),
+      })
     );
-    e.currentTarget.reset();
+    e.target.reset();
   }
 }
 
 async function loadMoreComments() {
   const resp = await fetch(
-    `/comments/bySubmissionId/${submissionId}?skip=${commentSkip}&limit=${commentLimit}`,
+    `/comments/bySubmissionId/${submissionId}?skip=${commentSkip}&limit=${commentLimit}`
   );
   const data = await resp.json();
   const list = document.getElementById("comments-list");
