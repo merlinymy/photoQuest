@@ -35,14 +35,27 @@ async function submitNewQuest(e) {
   xpRewards.storyTelling = parseInt(formData.get("xpRewards.storyTelling"), 10);
   xpRewards.techniques = parseInt(formData.get("xpRewards.techniques"), 10);
   const tip = formData.get("tip").trim();
-  const expiresIn = formData.get("expiry");
+  const expiresIn = formData.get("endAt");
 
   const imageFile = formData.get("image");
   let imageUrl = null;
   if (imageFile && imageFile.size > 0) {
+    // Build a safe storage key: quests/<userId>/<timestamp>-<slug>.<ext>
+    const userId = window.localStorage.getItem("userId") || "anonymous";
+    const originalName = imageFile.name || "image.jpg";
+    const lastDot = originalName.lastIndexOf(".");
+    const ext = lastDot > -1 ? originalName.slice(lastDot + 1) : "jpg";
+    const base = (lastDot > -1 ? originalName.slice(0, lastDot) : originalName)
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, "-")
+      .replace(/[^a-z0-9._-]/g, "");
+    const safeBase = base || "image";
+    const key = `quests/${userId}/${Date.now()}-${safeBase}.${ext}`;
+
     const { data, error } = await supabase.storage
       .from("photoQuestImage")
-      .upload(imageFile.name, imageFile);
+      .upload(key, imageFile, { upsert: false, cacheControl: "3600" });
     if (error) {
       console.error("Error uploading image:", error);
     } else {
