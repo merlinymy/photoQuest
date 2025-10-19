@@ -23,6 +23,12 @@ Project is deployed on (https://photoquest.onrender.com/)
 
 ![Screenshot](frontend/screenshot.png)
 
+## Demo
+
+User signup is not implemented yet. 
+Login to demo account with this demo email address
+fetherington0@techcrunch.com
+
 ## Quick Start
 
 Prerequisites:
